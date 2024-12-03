@@ -60,7 +60,6 @@ end)
 ## Day 2
 
 ```elixir
-# part 2
 defmodule Day2 do
   @file_path "/Users/leizhou/Dev/learn_x/aoc/2024/day2.txt"
 
