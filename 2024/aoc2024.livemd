@@ -60,6 +60,7 @@ end)
 ## Day 2
 
 ```elixir
+# part 2
 defmodule Day2 do
   @file_path "/Users/leizhou/Dev/learn_x/aoc/2024/day2.txt"
 
@@ -205,6 +206,173 @@ IO.inspect(%{day3_part1: Day3.part1()})
 IO.inspect(%{day3_part2: Day3.part2()})
 ```
 
-```elixir
+## Day 4
 
+```elixir
+defmodule Day4 do
+  @file_path "/Users/leizhou/Dev/learn_x/aoc/2024/day4.txt"
+
+  def to_mat(file_path) do
+    File.read!(file_path)
+    |> String.split("\n", trim: true)
+    |> Enum.map(&(String.split(&1, "", trim: true) |> List.to_tuple()))
+    |> List.to_tuple()
+  end
+
+  def mat_elem(mat, x, y) do
+    elem(elem(mat, x), y)
+  end
+
+  def to_four_letter(mat, x, y, :lr) do
+    0..3
+    |> Enum.reduce("", fn index, acc ->
+      acc <> mat_elem(mat, x, y + index)
+    end)
+  end
+
+  def to_four_letter(mat, x, y, :td) do
+    0..3
+    |> Enum.reduce("", fn index, acc ->
+      acc <> mat_elem(mat, x + index, y)
+    end)
+  end
+
+  def to_four_letter(mat, x, y, :nw_se) do
+    0..3
+    |> Enum.reduce("", fn index, acc ->
+      acc <> mat_elem(mat, x + index, y + index)
+    end)
+  end
+
+  def to_four_letter(mat, x, y, :sw_ne) do
+    0..3
+    |> Enum.reduce("", fn index, acc ->
+      acc <> mat_elem(mat, x - index, y + index)
+    end)
+  end
+
+  def to_xmas_ind(string) do
+    case string do
+      "XMAS" -> 1
+      "SAMX" -> 1
+      _ -> 0
+    end
+  end
+
+  def check_four_letter(mat, x, y, direction) do
+    to_four_letter(mat, x, y, direction) |> to_xmas_ind()
+  end
+
+  def count_row(mat, x) do
+    0..(tuple_size(elem(mat, x)) - 4)
+    |> Enum.map(fn index ->
+      check_four_letter(mat, x, index, :lr)
+    end)
+    |> Enum.sum()
+  end
+
+  def count_rows(mat) do
+    0..(tuple_size(mat) - 1)
+    |> Enum.reduce(0, fn x, acc ->
+      acc + count_row(mat, x)
+    end)
+  end
+
+  def count_column(mat, y) do
+    0..(tuple_size(mat) - 4)
+    |> Enum.map(fn index ->
+      check_four_letter(mat, index, y, :td)
+    end)
+    |> Enum.sum()
+  end
+
+  def count_columns(mat) do
+    0..(tuple_size(elem(mat, 0)) - 1)
+    |> Enum.reduce(0, fn y, acc ->
+      acc + count_column(mat, y)
+    end)
+  end
+
+  def count_nw_se(mat, x) when x <= tuple_size(mat) - 4 do
+    0..(tuple_size(elem(mat, x)) - 4)
+    |> Enum.map(fn index ->
+      check_four_letter(mat, x, index, :nw_se)
+    end)
+    |> Enum.sum()
+  end
+
+  def count_nw_se(_mat, _x), do: 0
+
+  def count_sw_ne(mat, x) when x >= 3 do
+    0..(tuple_size(elem(mat, x)) - 4)
+    |> Enum.map(fn index ->
+      check_four_letter(mat, x, index, :sw_ne)
+    end)
+    |> Enum.sum()
+  end
+
+  def count_sw_ne(_mat, _x), do: 0
+
+  def count_diags(mat) do
+    0..(tuple_size(mat) - 1)
+    |> Enum.reduce(0, fn x, acc ->
+      acc + count_nw_se(mat, x) + count_sw_ne(mat, x)
+    end)
+  end
+
+  def count_all(mat) do
+    count_rows(mat) + count_columns(mat) + count_diags(mat)
+  end
+
+  def part1() do
+    @file_path
+    |> to_mat()
+    |> count_all()
+  end
+
+  def to_mas_string(mat, x, y, :nw_se) do
+    -1..1
+    |> Enum.reduce("", fn index, acc ->
+      acc <> mat_elem(mat, x + index, y + index)
+    end)
+  end
+
+  def to_mas_string(mat, x, y, :sw_ne) do
+    -1..1
+    |> Enum.reduce("", fn index, acc ->
+      acc <> mat_elem(mat, x - index, y + index)
+    end)
+  end
+
+  def to_mas_ind(string) do
+    case string do
+      "MAS" -> 1
+      "SAM" -> 1
+      _ -> 0
+    end
+  end
+
+  def count_nw_se_mas(mat, x, y), do: to_mas_string(mat, x, y, :nw_se) |> to_mas_ind()
+
+  def count_sw_ne_mas(mat, x, y), do: to_mas_string(mat, x, y, :sw_ne) |> to_mas_ind()
+
+  def count_mas(mat, x, y) do
+    if(count_nw_se_mas(mat, x, y) + count_sw_ne_mas(mat, x, y) == 2, do: 1, else: 0)
+  end
+
+  def count_mas_all(mat) do
+    for x <- 1..(tuple_size(mat)-2), y <- 1..(tuple_size(elem(mat, 0))-2), reduce: 0 do
+      acc -> acc + count_mas(mat, x, y)
+    end 
+  end
+
+  def part2 do
+    @file_path
+    |> to_mat()
+    |> count_mas_all()
+  end
+end
+
+IO.inspect(%{day4_part1: Day4.part1()})
+IO.inspect(%{day4_part2: Day4.part2()})
 ```

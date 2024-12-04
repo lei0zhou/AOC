@@ -1,0 +1,53 @@
+# AOC 2023
+
+## AOC helper
+
+```elixir
+defmodule AOCHelper do
+  def to_int_list(txt_file) do
+    txt_file
+    |> File.read!()
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn list ->
+      String.split(list) |> Enum.map(&String.to_integer/1)
+    end)
+  end
+end
+```
+
+```elixir
+# defmodule Day do
+#   @file_path "/Users/leizhou/Dev/learn_x/aoc/2023/day.txt"
+#   def part1 do
+#   end
+
+#   def part2 do
+#   end
+# end
+
+# IO.inspect(%{day_part1: Day.part1()})
+# IO.inspect(%{day_part2: Day.part2()})
+```
+
+## Day 1
+
+```elixir
+defmodule Day do
+  @file_path "/Users/leizhou/Dev/learn_x/aoc/2023/day1.txt"
+  def part1 do
+    File.read!(@file_path)
+    |> String.split("\n", trim: true)
+    |> Enum.reduce(0, fn string, acc ->
+      [[_, left]] = Regex.scan(~r/^\D*(\d)/, string)
+      [[_, right]] = Regex.scan(~r/(\d)\D*$/, string)
+      acc + String.to_integer(left <> right)
+    end)
+  end
+
+  def part2 do
+  end
+end
+
+IO.inspect(%{day_part1: Day.part1()})
+# IO.inspect(%{day_part2: Day.part2()})
+```
