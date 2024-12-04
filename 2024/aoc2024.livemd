@@ -356,9 +356,7 @@ defmodule Day4 do
 
   def count_sw_ne_mas(mat, x, y), do: to_mas_string(mat, x, y, :sw_ne) |> to_mas_ind()
 
-  def count_mas(mat, x, y) do
-    if(count_nw_se_mas(mat, x, y) + count_sw_ne_mas(mat, x, y) == 2, do: 1, else: 0)
-  end
+  def count_mas(mat, x, y), do: (if count_nw_se_mas(mat, x, y) + count_sw_ne_mas(mat, x, y) == 2, do: 1, else: 0)
 
   def count_mas_all(mat) do
     for x <- 1..(tuple_size(mat)-2), y <- 1..(tuple_size(elem(mat, 0))-2), reduce: 0 do
